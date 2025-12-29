@@ -1,0 +1,27 @@
+name: parcel-service-CICD-pipeline
+run-name: Testing & Deploying
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    branches:
+      - 'feat'
+  push:
+    branches: ["main"]
+  
+
+jobs:
+
+  test:
+    name: Testing
+    runs-on: ubuntu-latest
+    container: golang:1.24
+    steps:
+      - uses: checkout@v4
+      - name: Run Unit Tests
+        run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go test -v ./...
+
+      - name: Vet
+        run: go vet ./...
