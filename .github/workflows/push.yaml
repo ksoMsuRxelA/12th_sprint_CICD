@@ -3,25 +3,20 @@ run-name: Testing & Deploying
 
 on:
   pull_request:
-    types:
-      - opened
-      - synchronize
-    branches:
-      - 'feat'
-  push:
+    types: [opened, synchronize]
     branches: ["main"]
     tags:
       - "v*"
   
 
 jobs:
-
   test:
     name: Testing
     runs-on: ubuntu-latest
     container: golang:1.24
     steps:
       - uses: actions/checkout@v4
+
       - name: Run Unit Tests
         run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go test -v ./...
 
@@ -32,7 +27,7 @@ jobs:
     name: Deploying
     runs-on: ubuntu-latest
     needs: test
-    if: startsWith(github.ref, 'refs/tags')
+    if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -58,4 +53,4 @@ jobs:
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }} 
+          labels: ${{ steps.meta.outputs.labels }}
